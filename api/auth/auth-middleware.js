@@ -7,7 +7,7 @@ const checkUsernameFree = async (req, res, next) => {
         next()
       }
       else{
-        next({status: 422, message: "username taken"})
+        next({status: 400, message: "username taken"})
       }
     } 
     catch (error) {
@@ -44,8 +44,6 @@ const checkUsernameExists = async (req, res, next) => {
       next(error)
     }    
   }
-
-
 
 module.exports = {
     checkUsernameFree,
