@@ -1,6 +1,5 @@
 const request = require('supertest');
 const server = require('./server')
-const bcrypt = require('bcryptjs');
 const db = require('../data/dbConfig')
 
 beforeAll(async ()=>{
@@ -46,5 +45,32 @@ describe("[POST] /api/auth/register", ()=>{
       .post("/api/auth/register")
       .send({username: 'David', password: 'Aihe'});
     expect(res.status).toBe(400)
+  })
+})
+
+//Login Endpoint Testing
+describe('[POST] /api/auth/login', () => {
+  beforeAll(async () => {
+    await request(server)
+      .post('/api/auth/register')
+      .send({username: 'David', password: 'Aihe'})
+  })
+
+  test('sends error when missing a username', async () => {
+    const res = await request(server)
+      .post('/api/auth/login')
+      .send({password: 'Aihe'})
+
+    expect(res.status).toBe(401)
+    expect(res.body.message).toMatch('username and password required')
+  })
+
+  test('sends error when using incorrect password', async () => {
+    const res = await request(server)
+      .post('/api/auth/login')
+      .send({username: 'David', password: 'NotAihe'})
+
+    expect(res.status).toBe(401)
+    expect(res.body.message).toMatch('invalid credentials')
   })
 })
