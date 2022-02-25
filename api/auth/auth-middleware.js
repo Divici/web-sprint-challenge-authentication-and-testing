@@ -7,7 +7,7 @@ const checkUsernameFree = async (req, res, next) => {
         next()
       }
       else{
-        next({status: 422, message: "Username taken"})
+        next({status: 422, message: "username taken"})
       }
     } 
     catch (error) {
@@ -29,9 +29,26 @@ const validatePayload = (req, res, next) => {
     }
 }
 
+const checkUsernameExists = async (req, res, next) => {
+    try {
+      const [user] = await User.findBy({username: req.body.username})
+      if(!user){
+        next({status:401, message: "invalid credentials"})
+      }
+      else{
+        req.user = user
+        next()
+      }
+    } 
+    catch (error) {
+      next(error)
+    }    
+  }
+
 
 
 module.exports = {
     checkUsernameFree,
     validatePayload,
+    checkUsernameExists
 }
